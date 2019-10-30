@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -106,19 +108,24 @@ public class AverageManager : MonoBehaviour
 
     IEnumerator LoadImage()
     {
-        yield return new WaitForSeconds(1.0f);
-
         ImageLoading = true;
-
-        if (File.Exists(ImageFilePath))
+        
+        while (!File.Exists(ImageFilePath))
         {
+            yield return new WaitForSeconds(0.1f);
+        }
+
+       if( File.Exists(ImageFilePath))
+        {
+            yield return new WaitForSeconds(0.1f);
+
             UnityWebRequest www = UnityWebRequestTexture.GetTexture("file://" + System.Environment.CurrentDirectory + "/" + ImageFilePath);
 
             yield return www.SendWebRequest();
 
             if (www.isNetworkError || www.isHttpError)
             {
-                Debug.Log(www.error);
+                UnityEngine.Debug.Log(www.error);
             }
             else
             {
