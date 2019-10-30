@@ -1,0 +1,8 @@
+{
+  "imagesDir": "LeVisageDuMusee",
+  "outputWidth": 600,
+  "outputHeight": 600,
+  "delimiter": "_",
+  "outputFilename": "average.jpg",
+  "requestFilename":  "request.json"
+}
