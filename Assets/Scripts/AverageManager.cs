@@ -87,6 +87,13 @@ public class AverageManager : MonoBehaviour
     public void GenerateRequest()
     {
         ErrorText.text = "";
+
+        if (!MaleToggle.isOn && !FemaleToggle.isOn)
+        {
+            ErrorText.text = "Vous devez spécifier au moins un genre";
+            return;
+        }
+
         LoadingPanel.SetActive(true);
 
         File.Delete(ImageFilePath);
