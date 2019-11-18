@@ -1562,7 +1562,7 @@ MonoBehaviour:
   FemaleToggle: {fileID: 1735262464}
   ErrorText: {fileID: 2045490030}
   LoadingPanel: {fileID: 1946532766}
-  Timeout: 5
+  Timeout: 20
 --- !u!4 &1011305427
 Transform:
   m_ObjectHideFlags: 0
