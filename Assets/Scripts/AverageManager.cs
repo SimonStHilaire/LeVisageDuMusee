@@ -45,6 +45,13 @@ public class AverageManager : MonoBehaviour
     {
         MinAgeSlider.onValueChanged.AddListener(OnNewMinAgeValue);
         MaxAgeSlider.onValueChanged.AddListener(OnNewMaxAgeValue);
+        MaleToggle.onValueChanged.AddListener(OnGenderChange);
+        FemaleToggle.onValueChanged.AddListener(OnGenderChange);
+    }
+
+    void OnGenderChange(bool isOn)
+    {
+        ErrorText.text = "";
     }
 
     void OnNewMinAgeValue(float value)
