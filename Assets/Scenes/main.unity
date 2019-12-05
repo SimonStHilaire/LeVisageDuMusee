@@ -1453,7 +1453,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 70
+  m_Text: 20
 --- !u!222 &770603268
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2094,10 +2094,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 575435723}
   m_HandleRect: {fileID: 561042453}
   m_Direction: 0
-  m_MinValue: 18
-  m_MaxValue: 70
+  m_MinValue: 0
+  m_MaxValue: 10
   m_WholeNumbers: 1
-  m_Value: 18
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -2483,10 +2483,10 @@ MonoBehaviour:
   m_FillRect: {fileID: 735954009}
   m_HandleRect: {fileID: 1267655953}
   m_Direction: 0
-  m_MinValue: 18
-  m_MaxValue: 70
+  m_MinValue: 0
+  m_MaxValue: 10
   m_WholeNumbers: 1
-  m_Value: 70
+  m_Value: 10
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []

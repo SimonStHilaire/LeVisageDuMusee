@@ -56,19 +56,19 @@ public class AverageManager : MonoBehaviour
 
     void OnNewMinAgeValue(float value)
     {
-        MinAgeSlider.value = Mathf.Min(value, MaxAgeSlider.value);
+        MinAgeSlider.value = Mathf.Min(value, MaxAgeSlider.value -1);
     }
 
     void OnNewMaxAgeValue(float value)
     {
-        MaxAgeSlider.value = Mathf.Max(value, MinAgeSlider.value);
+        MaxAgeSlider.value = Mathf.Max(value, MinAgeSlider.value + 1);
     }
 
     // Update is called once per frame
     void Update()
     {
-        MinAgeValueText.text = MinAgeSlider.value.ToString();
-        MaxAgeValueText.text = MaxAgeSlider.value.ToString();
+        MinAgeValueText.text = (MinAgeSlider.value * 5 + 20).ToString();
+        MaxAgeValueText.text = (MaxAgeSlider.value * 5 + 20).ToString();
         
         if(RequestPending)
         {
@@ -101,13 +101,20 @@ public class AverageManager : MonoBehaviour
             return;
         }
 
+        //Hack pour prévenir d'attendre le timeout
+        if((int)MinAgeSlider.value == 9 && (int)MaxAgeSlider.value == 10 && MaleToggle.isOn && !FemaleToggle.isOn)
+        {
+            ErrorText.text = "Aucun résultat";
+            return;
+        }
+
         LoadingPanel.SetActive(true);
 
         File.Delete(ImageFilePath);
 
         RequestDefinition request = new RequestDefinition();
-        request.minAge = (int)MinAgeSlider.value;
-        request.maxAge = (int)MaxAgeSlider.value;
+        request.minAge = (int)MinAgeSlider.value * 5 + 20;
+        request.maxAge = (int)MaxAgeSlider.value * 5 + 20;
         if(MaleToggle.isOn)
             request.gender += "M";
 
