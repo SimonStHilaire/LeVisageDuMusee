@@ -4,5 +4,10 @@
   "outputHeight": 600,
   "delimiter": "_",
   "outputFilename": "average.jpg",
-  "requestFilename":  "request.json"
+  "requestFilename": "request.json",
+  "detectAge": false,
+  "detectGender": false,
+  "useDetectedAge": false,
+  "useDetectedGender":  false,
+  "generateAllImages": true
 }

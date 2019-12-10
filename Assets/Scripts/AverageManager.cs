@@ -25,9 +25,12 @@ public class AverageManager : MonoBehaviour
     public Text ErrorText;
 
     public GameObject LoadingPanel;
+
     public float Timeout;
 
     bool RequestPending = false;
+
+    Coroutine LoadImageCoroutine;
 
     [System.Serializable]
     private struct RequestDefinition
@@ -47,21 +50,41 @@ public class AverageManager : MonoBehaviour
         MaxAgeSlider.onValueChanged.AddListener(OnNewMaxAgeValue);
         MaleToggle.onValueChanged.AddListener(OnGenderChange);
         FemaleToggle.onValueChanged.AddListener(OnGenderChange);
+
+        GenerateRequest();
     }
 
     void OnGenderChange(bool isOn)
     {
         ErrorText.text = "";
+
+        GenerateRequest();
     }
 
     void OnNewMinAgeValue(float value)
     {
-        MinAgeSlider.value = Mathf.Min(value, MaxAgeSlider.value -1);
+        MinAgeSlider.value = Mathf.Min(value, MaxAgeSlider.maxValue - 1);
+
+        if (value < MaxAgeSlider.maxValue)
+        {
+            if (value >= MaxAgeSlider.value)
+                MaxAgeSlider.value = value + 1;
+        }
+        
+        GenerateRequest();
     }
 
     void OnNewMaxAgeValue(float value)
     {
-        MaxAgeSlider.value = Mathf.Max(value, MinAgeSlider.value + 1);
+        MaxAgeSlider.value = Mathf.Max(value, MinAgeSlider.minValue + 1);
+
+        if (value > MinAgeSlider.minValue)
+        {
+            if (value <= MinAgeSlider.value)
+                MinAgeSlider.value = value - 1;
+        }
+
+        GenerateRequest();
     }
 
     // Update is called once per frame
@@ -77,7 +100,8 @@ public class AverageManager : MonoBehaviour
             if(Timer <= 0.0f)
             {
                 ErrorText.text = "Aucun résultat";
-                StopCoroutine(LoadImage());
+                if(LoadImageCoroutine != null)
+                    StopCoroutine(LoadImage(ImageFilePath));
                 ImageLoading = false;
                 RequestPending = false;
                 LoadingPanel.SetActive(false);
@@ -85,7 +109,7 @@ public class AverageManager : MonoBehaviour
 
             if (!ImageLoading && File.Exists(ImageFilePath))
             {
-                StartCoroutine(LoadImage());
+                LoadImageCoroutine = StartCoroutine(LoadImage(ImageFilePath));
             }
         }
         
@@ -108,18 +132,28 @@ public class AverageManager : MonoBehaviour
             return;
         }
 
-        LoadingPanel.SetActive(true);
-
-        File.Delete(ImageFilePath);
+        if (LoadImageCoroutine != null)
+            StopCoroutine(LoadImage(ImageFilePath));
 
         RequestDefinition request = new RequestDefinition();
         request.minAge = (int)MinAgeSlider.value * 5 + 20;
         request.maxAge = (int)MaxAgeSlider.value * 5 + 20;
-        if(MaleToggle.isOn)
+        if (MaleToggle.isOn)
             request.gender += "M";
 
-        if(FemaleToggle.isOn)
+        if (FemaleToggle.isOn)
             request.gender += "F";
+
+        string alreadyGeneratedFilename = request.gender + "_" + request.minAge + "_" + request.maxAge + ".jpg";
+        if (File.Exists(alreadyGeneratedFilename))
+        {
+            StartCoroutine(LoadImage(alreadyGeneratedFilename));
+            return;
+        }
+
+        LoadingPanel.SetActive(true);
+
+        File.Delete(ImageFilePath);
 
         File.WriteAllText(RequestFilePath, JsonUtility.ToJson(request, true));
 
@@ -127,20 +161,20 @@ public class AverageManager : MonoBehaviour
         Timer = Timeout;
     }
 
-    IEnumerator LoadImage()
+    IEnumerator LoadImage(string filename)
     {
         ImageLoading = true;
         
-        while (!File.Exists(ImageFilePath))
+        while (!File.Exists(filename))
         {
             yield return new WaitForSeconds(0.1f);
         }
 
-       if( File.Exists(ImageFilePath))
+       if( File.Exists(filename))
         {
             yield return new WaitForSeconds(0.1f);
 
-            UnityWebRequest www = UnityWebRequestTexture.GetTexture("file://" + System.Environment.CurrentDirectory + "/" + ImageFilePath);
+            UnityWebRequest www = UnityWebRequestTexture.GetTexture("file://" + System.Environment.CurrentDirectory + "/" + filename);
 
             yield return www.SendWebRequest();
 
